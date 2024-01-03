@@ -4,6 +4,7 @@ import { useState } from 'react'
 // ** Next Imports
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { GoogleLogin } from 'react-google-login'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -60,6 +61,7 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState({
+    email: '',
     password: '',
     showPassword: false
   })
@@ -80,12 +82,35 @@ const LoginPage = () => {
     event.preventDefault()
   }
 
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    const userEmail = 'max3g@gmail.com';
+    const userPassword = 'ZXCasd123';
+
+    const enteredEmail = values.email;
+    const enteredPassword = values.password;
+
+    if (enteredEmail === userEmail && enteredPassword === userPassword) {
+      router.push('/');
+    } else {
+      console.log('Invalid credentials. Please try again.');
+    }
+
+  }
+
+  const responseGoogle = (response) => {
+    // Handle the response from Google OAuth here
+    console.log(response);
+    // You can process the response and perform actions based on success or failure
+  }
+
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg
+            {/* <svg
               width={35}
               height={29}
               version='1.1'
@@ -143,7 +168,7 @@ const LoginPage = () => {
                   </g>
                 </g>
               </g>
-            </svg>
+            </svg> */}
             <Typography
               variant='h6'
               sx={{
@@ -154,17 +179,17 @@ const LoginPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              {themeConfig.templateName}
+              MAX-3G
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+              LOGIN PAGE
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Please sign-in with your credentials!</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} value={values.email} onChange={handleChange('email')} />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
@@ -200,7 +225,7 @@ const LoginPage = () => {
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              onClick={handleLogin}
             >
               Login
             </Button>
@@ -218,24 +243,20 @@ const LoginPage = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link href='/' passHref>
                 <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Use GoogleLogin component */}
+                    <GoogleLogin
+                      clientId="635580296055-iait549l1cjl87pdfovtfu7ae699b40n.apps.googleusercontent.com" // Replace with your Google Client ID
+                      onSuccess={responseGoogle} // Callback on successful authentication
+                      onFailure={responseGoogle} // Callback on failed authentication
+                      cookiePolicy={'single_host_origin'} // Required for Google's API, maintains cookies for cross-site requests
+                      render={(renderProps) => (
+                        <IconButton component='a' onClick={renderProps.onClick}>
+                          <Google sx={{ color: '#db4437' }} />
+                        </IconButton>
+                      )}
+                    />
+                  </Box>
                 </IconButton>
               </Link>
             </Box>
@@ -249,3 +270,6 @@ const LoginPage = () => {
 LoginPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
 
 export default LoginPage
+
+// Client-ID
+//635580296055-iait549l1cjl87pdfovtfu7ae699b40n.apps.googleusercontent.com
